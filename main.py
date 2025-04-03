@@ -72,8 +72,14 @@ def main():
 
     # Initializarea variabilelor
     valori_x = [0.0] * dimensiunePopulatie
+    valori_noi_x = [0.0] * dimensiunePopulatie
+
     valori_functie = [0.0] * dimensiunePopulatie
+    valori_noi_functie = [0.0] * dimensiunePopulatie
+
     sirBinar = [""] * dimensiunePopulatie
+    sir_nou_binar = [""] * dimensiunePopulatie
+
     suma_totala_val_functie = 0.0
     probabilitati_selectie_cromozom = [0.0] * dimensiunePopulatie
     numere_uniforme = [0.0] * dimensiunePopulatie
@@ -129,7 +135,16 @@ def main():
         f.write('Nunerele uniforme: \n')
         for i in range(dimensiunePopulatie):
             numere_uniforme[i] = random.random()
-            f.write(f"u= {numere_uniforme[i]} cromozom {gasire_interval(numere_uniforme[i], q)}\n")
+            f.write(f"u = {numere_uniforme[i]:8} \t selectat cromozomul {gasire_interval(numere_uniforme[i], q):2d}\n")
+            index = gasire_interval(numere_uniforme[i], q) - 1
+            valori_noi_x[i] = valori_x[int(index)]
+            valori_noi_functie[i] = valori_functie[int(index)]
+            sir_nou_binar[i] = sirBinar[int(index)]
+
+        f.write("\n")
+        f.write('Dupa selectie: \n')
+        for i in range(dimensiunePopulatie):
+            f.write(f"{i + 1:2d}: {sir_nou_binar[i]} x= {valori_noi_x[i]: .6f} f= {valori_noi_functie[i]:.15f}\n")
 
 
 
