@@ -1,6 +1,6 @@
 import random
-from typing import Tuple
-from typing import List
+import bisect
+from typing import Tuple, List
 
 # Functie pentru generarea unui numar aleator rounjit la p zecimale
 def gen_numar_aleator(x: float, y: float, precizie: int) -> float:
@@ -54,6 +54,12 @@ def generare_sir_binar(x: int, discretizare: float, l: int, numarAleator: float)
 def calculare_valoare_functie(a: int, b: int, c: int, numar_aleator: float) -> float:
     return (a * (numar_aleator * numar_aleator) + b * numar_aleator) + c
 
+def gasire_interval(x: float, intervale: List[float]) ->  float:
+    i = bisect.bisect_right(intervale, x)
+    if i == 0 or i >= len(intervale):
+        raise ValueError(f"Numărul {x} este în afara intervalelor definite")
+    return i
+
 def main():
     # Citirea valorilor de intrare
     dimensiunePopulatie = int(input("Introduceti dimensiunea populatiei: "))
@@ -70,6 +76,7 @@ def main():
     sirBinar = [""] * dimensiunePopulatie
     suma_totala_val_functie = 0.0
     probabilitati_selectie_cromozom = [0.0] * dimensiunePopulatie
+    numere_uniforme = [0.0] * dimensiunePopulatie
 
     # Calcularea discretizarii si a valorii L
     nr = y - x
@@ -78,17 +85,26 @@ def main():
     l, nr = calculate_l(l, nr)
     discretizare = (y - x) / float(nr)
 
+    #Populatia initiala
     with open("rezultate.txt", 'w') as f:
         for i in range(dimensiunePopulatie):
+            #Valorea corespunzatoare cromozomului in domeniu de definitie
             valori_x[i] = gen_numar_aleator(x, y, precizie)
+
+            #Reprezentarea pe biti a cromozomului
             sirBinar[i] = generare_sir_binar(x, discretizare, l, valori_x[i])
+
+            #Valorea cromozomului, valorea functiei in punctul din domeniu
             valori_functie[i] = calculare_valoare_functie(a, b, c, valori_x[i])
+
+            #Suma tuturor valorilor functiei
             suma_totala_val_functie += valori_functie[i]
             f.write(f"{i + 1:2d}: {sirBinar[i]} x= {valori_x[i]: .6f} f= {valori_functie[i]:.15f}\n")
 
         f.write("\n")
         f.write("Probabilitati selectie:\n")
 
+        #Probabilitatea de selectie pentru fiecare cromozom
         for i in range(dimensiunePopulatie):
             probabilitati_selectie_cromozom[i] = valori_functie[i] / suma_totala_val_functie
             f.write(f"cromozom  {i + 1:2d} probabilitate {probabilitati_selectie_cromozom[i]}\n")
@@ -102,10 +118,20 @@ def main():
         q = [0.0] * (dimensiunePopulatie + 1)
         q[0] = 0.0
         f.write(f'0.0\n')
+
+        #Probabilitatile cumulate care dau intervalele de selectie
         for i in range(1, dimensiunePopulatie + 1):
             temp = q[i - 1]
             q[i] = temp + probabilitati_selectie_cromozom[i - 1]
             f.write(f'{q[i]}\n')
+
+        f.write("\n")
+        f.write('Nunerele uniforme: \n')
+        for i in range(dimensiunePopulatie):
+            numere_uniforme[i] = random.random()
+            f.write(f"u= {numere_uniforme[i]} cromozom {gasire_interval(numere_uniforme[i], q)}\n")
+
+
 
 if __name__ == "__main__":
     main()
