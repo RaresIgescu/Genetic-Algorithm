@@ -266,6 +266,7 @@
 #     main()
 
 import random
+import statistics
 import bisect
 from typing import Tuple, List
 
@@ -538,8 +539,8 @@ def main():
         for i in range(dimensiunePopulatie):
             f.write(f"{i + 1:2d}: {sir_nou_binar[i]} x= {valori_noi_x[i]: } f= {valori_noi_functie[i]:}\n")
 
-        f.write('\nEvolutia maximului: \n')
-        f.write(f"Etapa 1: Max fitness = {max(valori_noi_functie)}\n")
+        f.write('\nEvolutia maximului si a mediului: \n')
+        f.write(f"Etapa 1: Max fitness = {max(valori_noi_functie)} || Mean fitness: {statistics.mean(valori_noi_functie)}\n")
 
 
 
@@ -601,7 +602,7 @@ def main():
 
             # Salvare maxim
             max_fitness = max(valori_noi_functie)
-            f.write(f"Etapa {etapa}: Max fitness = {max_fitness}\n")
+            f.write(f"Etapa {etapa}: Max fitness = {max_fitness} || Mean fitness {statistics.mean(valori_noi_functie)}\n")
 
 
 if __name__ == "__main__":
